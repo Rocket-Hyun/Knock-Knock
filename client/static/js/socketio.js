@@ -43,16 +43,51 @@ socket.on('recieveRequest', function(data){
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete it!'
+    confirmButtonText: 'Yes, delete it!',
+    timer: 5000,
+
+  // 요청을 수락할 경우 result에 true
   }).then((result) => {
-    if (result.value) {
-      swal(
-        'Deleted!',
-        'Your file has been deleted.',
-        'success'
-      )
-    }
-  })
+    console.log(result);
+    // swal(
+    //   'Deleted!',
+    //   'Your file has been deleted.',
+    //   'success'
+    // );
+    swal({
+      html: `
+        <h1>채팅방</h1>
+        <div style="height:40vh;">
+        </div>
+        <input type="text">
+        <button>Send</button>
+      `,
+      showCloseButton: true,
+      showConfirmButton: false
+    });
+    // swal.close();
+    socket.emit('chatOk',{requestId:mySocketId, receiveId:id});
+
+
+
+
+  // 요청을 거절할 경우 result에 취소 방법
+  // timer / esc / cancel / overlay 등이 result로 옴
+  }).catch((result)=>{
+    console.log(result);
+  });
+
+
+
+  // .then((result) => {
+  //   if (result.value) {
+  //     swal(
+  //       'Deleted!',
+  //       'Your file has been deleted.',
+  //       'success'
+  //     )
+  //   }
+  // })
 
 });
 
@@ -72,9 +107,22 @@ function sendRequest(id){
     onOpen: () => {
       swal.showLoading()
     }
-  }).then((result) => {
-    // if (result.dismiss === 'timer') {
-      console.log('상대방이 응답하지 않아 취소됐습니다!')
-    // }
-  })
+  }).catch((result)=>{
+    // 채팅창이 꺼지면 실행되는 promise
+    // timer / esc / cancel / overlay 등이 result로 옴
+    console.log(result);
+    swal(
+      'Oops...',
+      '상대방이 응답하지 않습니다...',
+      'error'
+    )
+  });
+
+
+  // .then((result) => {
+  //   // if (result.dismiss === 'timer') {
+  //     // console.log('상대방이 응답하지 않아 취소됐습니다!')
+  //   // }
+  //   console.log(result);
+  // });
 }
