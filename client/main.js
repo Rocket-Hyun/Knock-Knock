@@ -46,7 +46,7 @@ io.sockets.on('connection',function(socket){
 
        console.log('Message from client :'+data);
 
-   })
+   });
 
    socket.on('fromclient1',function(data){
 
@@ -56,6 +56,19 @@ io.sockets.on('connection',function(socket){
 
        console.log('Message from client :'+data);
 
-   })
+   });
+
+    socket.on('sendRequest',function(data){
+        console.log('서버측 sendRequest');
+        io.sockets.connected[data.receiveId].emit('recieveRequest',data);
+        // io.sockets.socket(data.receiveId).emit('recieveRequest',data);
+    });
+
+    // 연결 끊을 때
+    socket.on('disconnect', function (data) {
+        // io.emit('user disconnected');
+        socket.broadcast.emit('deleteMarker',socket.id);
+        // console.log(data)
+    });
 
 });
