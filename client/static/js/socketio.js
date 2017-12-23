@@ -58,6 +58,7 @@ socket.on('recieveRequest', function(data){
       html: `
         <h1>채팅방</h1>
         <div style="height:40vh;">
+          상대방: ${data.requestId}
         </div>
         <input type="text">
         <button>Send</button>
@@ -66,28 +67,50 @@ socket.on('recieveRequest', function(data){
       showConfirmButton: false
     });
     // swal.close();
-    socket.emit('chatOk',{requestId:mySocketId, receiveId:id});
 
-
+    // 채팅을 수락했다는 브로드케스트를 보냄
+    //  이땐 내가 requestID
+    socket.emit('chatOk',{requestId:mySocketId, receiveId:data.requestId});
 
 
   // 요청을 거절할 경우 result에 취소 방법
   // timer / esc / cancel / overlay 등이 result로 옴
   }).catch((result)=>{
     console.log(result);
+    if (result == 'cancel') {
+      socket.emit('chatRefuse',{requestId:mySocketId, receiveId:data.requestId});
+    }
+  });
+
+  socket.on('ChatSuccess', function(data){
+    console.log('채팅 응답했더니? 데이터가?', data);
+
+    swal.close();
+    swal({
+      html: `
+        <h1>채팅방</h1>
+        <div style="height:40vh;">
+        상대방: ${data.requestId}
+        </div>
+        <input type="text">
+        <button>Send</button>
+      `,
+      showCloseButton: true,
+      showConfirmButton: false
+    });
   });
 
 
+  socket.on('ChatFail', function(data){
+    console.log('채팅 응답했더니? 데이터가?', data);
 
-  // .then((result) => {
-  //   if (result.value) {
-  //     swal(
-  //       'Deleted!',
-  //       'Your file has been deleted.',
-  //       'success'
-  //     )
-  //   }
-  // })
+    swal.close();
+    swal(
+      'Oops...',
+      `${data.requestId}님께서 채팅을 거절하셨습니다..`,
+      'error'
+    )
+  });
 
 });
 

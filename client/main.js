@@ -58,8 +58,9 @@ io.sockets.on('connection',function(socket){
 
    });
 
+    // 채팅 요청을 보낼때
+    // 특정 유저에게만 보냄
     socket.on('sendRequest',function(data){
-        console.log('서버측 sendRequest');
         io.sockets.connected[data.receiveId].emit('recieveRequest',data);
         // io.sockets.socket(data.receiveId).emit('recieveRequest',data);
     });
@@ -69,6 +70,18 @@ io.sockets.on('connection',function(socket){
         // io.emit('user disconnected');
         socket.broadcast.emit('deleteMarker',socket.id);
         // console.log(data)
+    });
+
+    // 채팅을 수락했을 때
+    socket.on('chatOk', function(data){
+        console.log('채팅 수락!!');
+        io.sockets.connected[data.receiveId].emit('ChatSuccess',data);
+    });
+
+    // 채팅을 거절했을 때
+    socket.on('chatRefuse', function(data){
+        console.log('채팅 거절!');
+        io.sockets.connected[data.receiveId].emit('ChatFail',data);
     });
 
 });
