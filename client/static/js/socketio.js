@@ -81,6 +81,18 @@ socket.on('recieveRequest', function(data){
       `,
       showCloseButton: true,
       showConfirmButton: false
+    })
+
+    // 채팅을 하다가 취소경우 실행되는 프로미스
+    // result에 취소 방법이 리턴됨
+    // timer / esc / cancel / overlay 등이 result로 옴
+    .catch((result)=>{
+      console.log('채팅을 취소하셨습니다: ',result);
+
+      // close을 눌러서 거절 했을 때만 chatRefuse 이벤트 브로드케스트
+      // if (result == 'close' || result == 'overlay') {
+      socket.emit('chatExit',{requestId:mySocketId, receiveId:data.requestId});
+      // }
     });
 
     // 상대 유저의 chatId를 currentChatId 변수에 담음
@@ -132,6 +144,18 @@ socket.on('ChatSuccess', function(data){
     `,
     showCloseButton: true,
     showConfirmButton: false
+  })
+
+  // 채팅을 하다가 취소경우 실행되는 프로미스
+  // result에 취소 방법이 리턴됨
+  // timer / esc / cancel / overlay 등이 result로 옴
+  .catch((result)=>{
+    console.log('채팅을 취소하셨습니다: ',result);
+
+    // close을 눌러서 거절 했을 때만 chatRefuse 이벤트 브로드케스트
+    // if (result == 'close' || result == 'overlay') {
+    socket.emit('chatExit',{requestId:mySocketId, receiveId:data.requestId});
+    // }
   });
 
   // 상대 유저의 chatId를 currentChatId 변수에 담음
@@ -139,6 +163,19 @@ socket.on('ChatSuccess', function(data){
   $("button#sendButton").click(function() {
     sendMessage();
   });
+});
+
+// 채팅이 끝났을 때 실행되는 브로드캐스트
+socket.on('ChatDone', function(data){
+  // 채팅 창이 닫힘
+  swal.close();
+
+  // 채팅 창이 생성됨
+  swal(
+    'Oops...',
+    `채팅이 종료되었습니다.`,
+    'error'
+  )
 });
 
 
