@@ -80,6 +80,8 @@ io.sockets.on('connection',function(socket){
     // 채팅을 수락했을 때
     socket.on('chatOk', function(data){
         console.log('채팅 수락!!');
+        console.log('요청을 보낸 사람:', data.receiveId);
+        console.log('요청 수락한 사람:', data.requestId);
         io.sockets.connected[data.receiveId].emit('ChatSuccess',data);
         // socket.emit('ChatSuccess',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
     });

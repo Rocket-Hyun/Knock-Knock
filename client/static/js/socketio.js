@@ -65,7 +65,7 @@ socket.on('recieveRequest', function(data){
     timer: 5000,
 
   })
-  // 요청을 수락할 경우 프로미스
+  // 내가 요청을 수락할 경우 프로미스
   // 채팅방 알림 창이 뜸
   // result엔 true
   .then((result) => {
@@ -97,52 +97,65 @@ socket.on('recieveRequest', function(data){
     });
   })
 
-  // 요청을 거절할 경우 result에 취소 방법
+  // 요청을 무시 또는 거절할 경우 실행되는 프로미스
+  // result에 취소 방법이 리턴됨
   // timer / esc / cancel / overlay 등이 result로 옴
   .catch((result)=>{
     console.log(result);
+
+    // cancel을 눌러서 거절 했을 때만 chatRefuse 이벤트 브로드케스트
     if (result == 'cancel') {
       socket.emit('chatRefuse',{requestId:mySocketId, receiveId:data.requestId});
     }
   });
 
-  socket.on('ChatSuccess', function(data){
-    console.log('채팅 응답했더니? 데이터가?', data);
 
-    swal.close();
-    swal({
-      html: `
-      <h1>채팅방</h1>
-      <div style="height:40vh;">
-      <p>상대방: ${data.requestId}</p>
-      <div id="chatDiv"></div>
-      </div>
-      <input type="text" id="messageInput">
-      <button id="sendButton">Send</button>
-      `,
-      showCloseButton: true,
-      showConfirmButton: false
-    });
-    currentChatId = data.requestId;
-    $("button#sendButton").click(function() {
-      sendMessage();
-    });
-  });
-
-
-  socket.on('ChatFail', function(data){
-    console.log('채팅 응답했더니? 데이터가?', data);
-
-    swal.close();
-    swal(
-      'Oops...',
-      `${data.requestId}님께서 채팅을 거절하셨습니다..`,
-      'error'
-    )
-  });
 
 });
 
+// 내가 요청을 보낸 상황에서 상대방이 수락할 경우 발생하는 이벤트
+// data로 {requestId: 요청한 유저의 socketId, receiveId: 내 socketId} 가 옴
+socket.on('ChatSuccess', function(data){
+  // 로딩 창이 닫힘
+  swal.close();
+
+  // 채팅 창이 생성됨
+  swal({
+    html: `
+    <h1>채팅방</h1>
+    <div style="height:40vh;">
+    <p>상대방: ${data.requestId}</p>
+    <div id="chatDiv"></div>
+    </div>
+    <input type="text" id="messageInput">
+    <button id="sendButton">Send</button>
+    `,
+    showCloseButton: true,
+    showConfirmButton: false
+  });
+
+  // 상대 유저의 chatId를 currentChatId 변수에 담음
+  currentChatId = data.requestId;
+  $("button#sendButton").click(function() {
+    sendMessage();
+  });
+});
+
+
+// 상대방이 채팅 거절시 이벤트
+// data로 {requestId: 요청한 유저의 socketId, receiveId: 내 socketId} 가 옴
+socket.on('ChatFail', function(data){
+  // 로딩 창 닫힘
+  swal.close();
+  swal(
+    'Oops...',
+    `${data.requestId}님께서 채팅을 거절하셨습니다..`,
+    'error'
+  )
+});
+
+// 상대 유저가 메세지를 보내면 실행되는 함수
+// data에 텍스트 자체가 들어있음
 socket.on("receiveMessage", function(data) {
   var p = $("<p class='message receiveMessage'></p>").text(data);
   $("div#chatDiv").append(p);
@@ -154,6 +167,7 @@ function sendPosition(position){
 }
 
 // 채팅 Request 보내기
+// 대기중
 function sendRequest(id){
   socket.emit('sendRequest',{requestId:mySocketId, receiveId:id});
   swal({
@@ -173,17 +187,9 @@ function sendRequest(id){
       'error'
     )
   });
-
-
-  // .then((result) => {
-  //   // if (result.dismiss === 'timer') {
-  //     // console.log('상대방이 응답하지 않아 취소됐습니다!')
-  //   // }
-  //   console.log(result);
-  // });
 }
 
-// 메세지를 보내면 내 채팅 창에 추가가되고 해당 상대방에게 메세지가 가는 함수
+// 메세지를 보내면 내 채팅 창에 추가가 되고 상대방에게 브로드케스트 하는 함수
 function sendMessage() {
   var p = $("<p class='message sendMessage'></p>").text($("#messageInput").val());
   $("div#chatDiv").append(p);
