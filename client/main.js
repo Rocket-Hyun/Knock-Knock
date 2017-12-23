@@ -84,4 +84,9 @@ io.sockets.on('connection',function(socket){
         io.sockets.connected[data.receiveId].emit('ChatFail',data);
     });
 
+    // 채팅 메시지를 보냈을 때
+    socket.on('sendMessage', function(data) {
+      console.log("채팅 메시지 전송!");
+      io.sockets.connected[data.receiveId].emit('receiveMessage', data.sendMessage);
+    })
 });

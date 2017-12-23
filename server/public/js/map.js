@@ -1,10 +1,3 @@
-var mapDiv = $("div#map")[0];
-var map = new naver.maps.Map(mapDiv, {
-  center: new naver.maps.LatLng(37.5666805, 126.9784147),
-  zoom: 5,
-  mapTypeId: naver.maps.MapTypeId.NORMAL
-});
-
 var infowindow = new naver.maps.InfoWindow();
 
 function onSuccessGeolocation(position) {
@@ -31,6 +24,13 @@ function onErrorGeolocation() {
 }
 
 $(window).on("load", function() {
+  var mapDiv = $("div#map")[0];
+  var map = new naver.maps.Map(mapDiv, {
+    center: new naver.maps.LatLng(37.5666805, 126.9784147),
+    zoom: 5,
+    mapTypeId: naver.maps.MapTypeId.NORMAL
+  });
+  
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
   } else {

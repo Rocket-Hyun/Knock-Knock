@@ -10,16 +10,16 @@ socket.on('registerId', function(data){
 });
 
 socket.on('getPosition',function(data){
-    if (allMarkers[data.socketId]) {
-      allMarkers[data.socketId].onRemove();
-    }
-    console.log('받은 데이터: ', data);
-    var sampleMarker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(data.position),
-        map: map
-    });
-    naver.maps.Event.addListener(sampleMarker, 'click', getClickHandler(sampleMarker));
-    allMarkers[data.socketId] = sampleMarker;
+  if (allMarkers[data.socketId]) {
+    allMarkers[data.socketId].onRemove();
+  }
+  console.log('받은 데이터: ', data);
+  var sampleMarker = new naver.maps.Marker({
+    position: new naver.maps.LatLng(data.position),
+    map: map
+  });
+  naver.maps.Event.addListener(sampleMarker, 'click', getClickHandler(sampleMarker));
+  allMarkers[data.socketId] = sampleMarker;
 });
 
 // 로그아웃 할 때
@@ -46,7 +46,7 @@ socket.on('recieveRequest', function(data){
     confirmButtonText: 'Yes, delete it!',
     timer: 5000,
 
-  // 요청을 수락할 경우 result에 true
+    // 요청을 수락할 경우 result에 true
   }).then((result) => {
     console.log(result);
     // swal(
@@ -56,12 +56,13 @@ socket.on('recieveRequest', function(data){
     // );
     swal({
       html: `
-        <h1>채팅방</h1>
-        <div style="height:40vh;">
-          상대방: ${data.requestId}
-        </div>
-        <input type="text">
-        <button>Send</button>
+      <h1>채팅방</h1>
+      <div style="height:40vh;">
+      <p>상대방: ${data.requestId}</p>
+      <div id="chatDiv"></div>
+      </div>
+      <input type="text" id="messageInput">
+      <button>Send</button>
       `,
       showCloseButton: true,
       showConfirmButton: false
@@ -73,8 +74,8 @@ socket.on('recieveRequest', function(data){
     socket.emit('chatOk',{requestId:mySocketId, receiveId:data.requestId});
 
 
-  // 요청을 거절할 경우 result에 취소 방법
-  // timer / esc / cancel / overlay 등이 result로 옴
+    // 요청을 거절할 경우 result에 취소 방법
+    // timer / esc / cancel / overlay 등이 result로 옴
   }).catch((result)=>{
     console.log(result);
     if (result == 'cancel') {
@@ -88,12 +89,13 @@ socket.on('recieveRequest', function(data){
     swal.close();
     swal({
       html: `
-        <h1>채팅방</h1>
-        <div style="height:40vh;">
-        상대방: ${data.requestId}
-        </div>
-        <input type="text">
-        <button>Send</button>
+      <h1>채팅방</h1>
+      <div style="height:40vh;">
+      <p>상대방: ${data.requestId}</p>
+      <div id="chatDiv"></div>
+      </div>
+      <input type="text" id="messageInput">
+      <button>Send</button>
       `,
       showCloseButton: true,
       showConfirmButton: false
@@ -112,6 +114,11 @@ socket.on('recieveRequest', function(data){
     )
   });
 
+});
+
+socket.on("receiveMessage", function(data) {
+  var p = $("<p class='message receiveMessage'></p>").text(data);
+  $("div#chatDiv").append(p);
 });
 
 // 포지션이 변경될 때 소켓ID랑 위치정보를 보냄
@@ -148,4 +155,11 @@ function sendRequest(id){
   //   // }
   //   console.log(result);
   // });
+}
+
+function sendMessage(id) {
+  var p = $("<p class='message sendMessage'></p>").text($("#messageInput").val());
+  $("div#chatDiv").append(p);
+  $("#messageInput").val("");
+  socket.emit('sendMessage', {requestId:mySocektId, receiveId:id, sendMessage:$("#messageInput").val()});
 }
