@@ -5,6 +5,7 @@ var map = new naver.maps.Map('map', {
     mapTypeId: naver.maps.MapTypeId.NORMAL
 });
 
+var markers = [];
 var current_marker;
 var current_circle;
 
@@ -39,7 +40,6 @@ function onSuccessGeolocation(position) {
 
       // 현재 위치 찍기
       var marker = new naver.maps.Marker(markerOptions);
-
       current_marker = marker;
 
       // 현재 위치 근처 원그리기
@@ -63,6 +63,9 @@ function onSuccessGeolocation(position) {
       //  이후부터는 기존 마커/원의 위치 변경
       current_marker.setPosition(location);
       current_circle.setCenter(location);
+
+      sendPosition(current_marker.getPosition());
+      // socket.emit('fromclient1',);
     }
 
 
@@ -113,6 +116,8 @@ function success(pos) {
 
   console.log("Geo Changed!!");
   currentPositionUpdate();
+
+
 }
 function error(err) {
   console.warn('ERROR(' + err.code + '): ' + err.message);
@@ -127,3 +132,33 @@ function error(err) {
 //   timeout: 5000,
 //   maximumAge: 0
 // };
+
+
+
+
+// 샘플 마커 찍기
+// console.log(current_marker.getPosition());
+var sampleMarker = new naver.maps.Marker({
+    position: new naver.maps.LatLng(37.5614117, 126.93994470000001),
+    map: map
+});
+markers.push(sampleMarker);
+
+var sampleMarker2 = new naver.maps.Marker({
+    position: new naver.maps.LatLng(37.562117, 126.94094470000001),
+    map: map
+
+});
+markers.push(sampleMarker2);
+
+// 마커 클릭 이벤트
+function getClickHandler(seq) {
+    return function(e) {
+        var marker = markers[seq];
+        console.log(marker);
+    }
+}
+
+for (var i=0, ii=markers.length; i<ii; i++) {
+    naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
+}
