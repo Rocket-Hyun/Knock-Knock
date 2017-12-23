@@ -1,13 +1,5 @@
 
 var socket = io.connect('');
-
-// $("#msgbox").keyup(function(event) {
-//     if (event.which == 13) {
-//         socket.emit('fromclient1',{msg:$('#msgbox').val()+"(junghyun)"});
-//         $('#msgbox').val('');
-//     }
-// });
-
 var mySocketId;
 var allMarkers = {};
 
@@ -15,7 +7,6 @@ var allMarkers = {};
 socket.on('registerId', function(data){
   console.log(data);
   mySocketId = data.id;
-  sendPosition();
 });
 
 socket.on('getPosition',function(data){
@@ -27,6 +18,7 @@ socket.on('getPosition',function(data){
         position: new naver.maps.LatLng(data.position),
         map: map
     });
+    naver.maps.Event.addListener(sampleMarker, 'click', getClickHandler(sampleMarker));
     allMarkers[data.socketId] = sampleMarker;
 });
 
@@ -39,8 +31,19 @@ socket.on('deleteMarker', function(data){
   delete allMarkers.data;
 });
 
+// 채팅 요청 받을 때
+socket.on('recieveRequest', function(data){
+  console.log("채팅창 요청!");
+  console.log(data);
+});
+
 // 포지션이 변경될 때 소켓ID랑 위치정보를 보냄
 function sendPosition(position){
   console.log({socketId: mySocketId, position: position});
   socket.emit('positionUpdate',{socketId: mySocketId, position: position});
+}
+
+// 채팅 Request 보내기
+function sendRequest(id){
+  socket.emit('sendRequest',{requestId:mySocketId, receiveId:id});
 }

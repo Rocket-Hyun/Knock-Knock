@@ -5,7 +5,6 @@ var map = new naver.maps.Map('map', {
     mapTypeId: naver.maps.MapTypeId.NORMAL
 });
 
-var markers = [];
 var current_marker;
 var current_circle;
 
@@ -59,21 +58,16 @@ function onSuccessGeolocation(position) {
 
       current_circle = circle;
 
+      naver.maps.Event.addListener(current_marker, 'click', getClickHandler(current_marker));
+
     } else {
       //  이후부터는 기존 마커/원의 위치 변경
       current_marker.setPosition(location);
       current_circle.setCenter(location);
-
-      sendPosition(current_marker.getPosition());
       // socket.emit('fromclient1',);
     }
 
-
-    // infowindow.setContent('<div style="padding:20px;">' +
-    //     'latitude: '+ location.lat() +'<br />' +
-    //     'longitude: '+ location.lng() +'</div>');
-
-    // infowindow.open(map, location);
+    sendPosition(current_marker.getPosition());
 }
 
 function onErrorGeolocation() {
@@ -138,27 +132,33 @@ function error(err) {
 
 // 샘플 마커 찍기
 // console.log(current_marker.getPosition());
-var sampleMarker = new naver.maps.Marker({
-    position: new naver.maps.LatLng(37.5614117, 126.93994470000001),
-    map: map
-});
-markers.push(sampleMarker);
-
-var sampleMarker2 = new naver.maps.Marker({
-    position: new naver.maps.LatLng(37.562117, 126.94094470000001),
-    map: map
-
-});
-markers.push(sampleMarker2);
+// var sampleMarker = new naver.maps.Marker({
+//     position: new naver.maps.LatLng(37.5614117, 126.93994470000001),
+//     map: map
+// });
+// markers.push(sampleMarker);
+//
+// var sampleMarker2 = new naver.maps.Marker({
+//     position: new naver.maps.LatLng(37.562117, 126.94094470000001),
+//     map: map
+//
+// });
+// markers.push(sampleMarker2);
 
 // 마커 클릭 이벤트
-function getClickHandler(seq) {
+function getClickHandler(marker) {
     return function(e) {
-        var marker = markers[seq];
+        // var marker = markers[seq];
         console.log(marker);
+        console.log(getKeyByValue(allMarkers,marker));
+        sendRequest(getKeyByValue(allMarkers,marker));
     }
 }
 
-for (var i=0, ii=markers.length; i<ii; i++) {
-    naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
-}
+// for (var i=0, ii=markers.length; i<ii; i++) {
+//     naver.maps.Event.addListener(markers[i], 'click', getClickHandler(i));
+// }
+//
+// for (var key in allMarkers) {
+//   console.log(key, allMarkers[key]);
+// }
