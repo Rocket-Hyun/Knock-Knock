@@ -37,23 +37,22 @@ var io = require('socket.io').listen(httpServer);
 
 io.sockets.on('connection',function(socket){
 
-   socket.emit('tojunghyun',{msg:'Hello Socket IO!'});
+   socket.emit('registerId',{id: socket.id});
 
-   socket.on('fromclient',function(data){
+   socket.on('positionUpdate',function(data){
 
-       socket.broadcast.emit('toclient',data); // 자신을 제외하고 다른 클라이언트에게 보냄
+       socket.broadcast.emit('getPosition',data); // 자신을 제외하고 다른 클라이언트에게 보냄
+       socket.emit('getPosition',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
 
-       socket.emit('toclient',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
-
-       console.log('Message from client :'+data.msg);
+       console.log('Message from client :'+data);
 
    })
 
    socket.on('fromclient1',function(data){
 
-       socket.broadcast.emit('tojunghyun',data); // 자신을 제외하고 다른 클라이언트에게 보냄
+       socket.broadcast.emit('getPosition',data); // 자신을 제외하고 다른 클라이언트에게 보냄
 
-       socket.emit('tojunghyun',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
+       socket.emit('getPosition',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
 
        console.log('Message from client :'+data);
 

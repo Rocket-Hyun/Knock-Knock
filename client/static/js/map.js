@@ -64,7 +64,8 @@ function onSuccessGeolocation(position) {
       current_marker.setPosition(location);
       current_circle.setCenter(location);
 
-      socket.emit('fromclient1',{msg:current_marker.getPosition()});
+      sendPosition(current_marker.getPosition());
+      // socket.emit('fromclient1',);
     }
 
 
@@ -115,6 +116,8 @@ function success(pos) {
 
   console.log("Geo Changed!!");
   currentPositionUpdate();
+
+
 }
 function error(err) {
   console.warn('ERROR(' + err.code + '): ' + err.message);
