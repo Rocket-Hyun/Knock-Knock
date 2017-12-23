@@ -5,6 +5,7 @@
 
 #chatDiv {
   overflow-y: scroll;
+  height: 100%;
 }
 
 .message {
