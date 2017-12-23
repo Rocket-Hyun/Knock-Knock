@@ -1,4 +1,4 @@
-var socket = io.connect("http://192.168.0.55:8080");
+var socket = io.connect("https://52.79.47.10:3000");
 var mySocketId;
 var currentChatId;
 var allMarkers = {};
