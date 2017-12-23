@@ -58,7 +58,7 @@ function onSuccessGeolocation(position) {
 
       current_circle = circle;
 
-      naver.maps.Event.addListener(current_marker, 'click', getClickHandler(current_marker));
+      // naver.maps.Event.addListener(current_marker, 'click', getClickHandler(current_marker));
 
     } else {
       //  이후부터는 기존 마커/원의 위치 변경

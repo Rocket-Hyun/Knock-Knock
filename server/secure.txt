@@ -1,0 +1,20 @@
+
+// cspro mysql 주소
+
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'cs20120863',
+  password : 'dbpass',
+  port     : '3306',
+  database : 'db20120863'
+});
+
+// aws rds mysql 주소
+
+var connection = mysql.createConnection({
+  host     : 'mytestdb.cpt4wdcgjziv.ap-northeast-2.rds.amazonaws.com',
+  user     : 'rocket',
+  password : 'rockethyun',
+  port     : '3306',
+  database : 'my_db'
+});
