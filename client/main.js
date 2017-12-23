@@ -97,4 +97,10 @@ io.sockets.on('connection',function(socket){
       console.log("채팅 메시지 전송!");
       io.sockets.connected[data.receiveId].emit('receiveMessage', data.sendMessage);
     });
+
+    // 채팅창 중간 종료
+    socket.on('chatExit', function(data){
+      io.sockets.connected[data.receiveId].emit('ChatDone', data);
+      socket.emit('ChatDone',data);
+    });
 });
