@@ -1,4 +1,5 @@
 var express = require('express');
+var ejs_layout = require('ejs-layouts');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -12,9 +13,16 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+server.listen(8080, "192.168.0.55");
+
+io.on('connection', function(socket) {
+  socket.on('positionUpdate', function(data) {
+  });
+});
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -23,6 +31,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(ejs_layout.express);
 
 app.use('/', index);
 app.use('/users', users);
