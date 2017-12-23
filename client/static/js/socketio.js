@@ -1,6 +1,7 @@
 
 var socket = io.connect('');
 var mySocketId;
+var currentChatId;
 var allMarkers = {};
 
 // 내 소켓ID를 등록
@@ -62,7 +63,7 @@ socket.on('recieveRequest', function(data){
       <div id="chatDiv"></div>
       </div>
       <input type="text" id="messageInput">
-      <button>Send</button>
+      <button id="sendButton">Send</button>
       `,
       showCloseButton: true,
       showConfirmButton: false
@@ -71,8 +72,12 @@ socket.on('recieveRequest', function(data){
 
     // 채팅을 수락했다는 브로드케스트를 보냄
     //  이땐 내가 requestID
+    currentChatId = data.requestId;
     socket.emit('chatOk',{requestId:mySocketId, receiveId:data.requestId});
 
+    $("button#sendButton").click(function() {
+      sendMessage();
+    });
 
     // 요청을 거절할 경우 result에 취소 방법
     // timer / esc / cancel / overlay 등이 result로 옴
@@ -99,6 +104,10 @@ socket.on('recieveRequest', function(data){
       `,
       showCloseButton: true,
       showConfirmButton: false
+    });
+    currentChatId = data.requestId;
+    $("button#sendButton").click(function() {
+      sendMessage();
     });
   });
 
@@ -157,9 +166,9 @@ function sendRequest(id){
   // });
 }
 
-function sendMessage(id) {
+function sendMessage() {
   var p = $("<p class='message sendMessage'></p>").text($("#messageInput").val());
   $("div#chatDiv").append(p);
   $("#messageInput").val("");
-  socket.emit('sendMessage', {requestId:mySocektId, receiveId:id, sendMessage:$("#messageInput").val()});
+  socket.emit('sendMessage', {requestId:mySocektId, receiveId:currentChatId, sendMessage:$("#messageInput").val()});
 }
