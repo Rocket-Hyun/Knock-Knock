@@ -24,7 +24,7 @@ io.sockets.on('connection',function(socket){
   socket.emit('registerId',{id: socket.id});
   socket.on('positionUpdate',function(data){
     socket.broadcast.emit('getPosition',data); // 자신을 제외하고 다른 클라이언트에게 보냄
-    socket.emit('getPosition',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
+    // socket.emit('getPosition',data); // 해당 클라이언트에게만 보냄. 다른 클라이언트에 보낼려면?
   });
 
   socket.on('fromclient1',function(data) {
@@ -59,7 +59,14 @@ io.sockets.on('connection',function(socket){
   socket.on('sendMessage', function(data) {
 	var target = io.sockets.connected[data.receiveId];
     if(target != null) target.emit('receiveMessage', data.sendMessage);
-  })
+  });
+
+  // 채팅창 중간 종료
+  socket.on('chatExit', function(data) {
+	var target = io.sockets.connected[data.receiveId];
+	if(target != null) target.emit('ChatDone', data);
+	socket.emit('ChatDone', data);
+  });
 });
 
 // view engine setup
