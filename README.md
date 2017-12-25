@@ -48,6 +48,7 @@ node app.js
 * [NodeJS](https://nodejs.org/) - 웹 서버
 * [SweetAlert2](https://limonte.github.io/sweetalert2/) - 메시지 알림창
 * [socket.io](https://socket.io/) - 실시간으로 메시지를 주고받기 위한 모듈
+* [NAVER Maps Javascript API v3](https://navermaps.github.io/maps.js/) - 지도 기능을 구현하기 위한 API
 
 ## 제작
 
