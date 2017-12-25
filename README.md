@@ -52,7 +52,7 @@ node app.js
 ## 제작
 
 * **박정현(20120863)** - *네이버 지도 API를 이용한 위치 출력과 채팅창 생성 기능 구현* - [Rocket-Hyun](https://github.com/Rocket-Hyun)
-* **장정훈(20121634)** - *채팅 메시지를 주고받는 기능과 채팅 UI 구현* - [jh95kr2004](https://github.com/jh95kr2004)
+* **장정훈(20121634)** - *서버 구축 및 채팅 메시지를 주고받는 기능과 채팅 UI 구현* - [jh95kr2004](https://github.com/jh95kr2004)
 
 ## License
 
